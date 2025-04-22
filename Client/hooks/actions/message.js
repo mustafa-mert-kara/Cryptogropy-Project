@@ -1,6 +1,7 @@
 import actiontypes from "../action-types/actiontypes";
 
 export const ADD_MESSAGE = (message, id) => {
+  console.log("Inside ADD_Message")
   return {
     type: actiontypes.ADD_FRIEND,
     message: message,
@@ -25,6 +26,7 @@ export const EDIT_MESSAGE = (message, chatId, index) => {
 };
 
 export const ADD_USER_MESSAGE = (id, messages) => {
+  console.log("Inside ADD_USER_Message")
   return {
     type: actiontypes.ADD_USER_MESSAGE,
     messages: messages,

@@ -17,5 +17,5 @@ export const store = createStore(
 );
 
 store.subscribe(() => {
-  console.log(store.getState());
+  console.log("Inside Subscribe",store.getState());
 });

@@ -13,7 +13,7 @@ const OTPRoutes = require("./routes/otp");
 const chatRoutes = require("./routes/chat");
 const messageRoutes = require("./routes/message");
 const colors = require("colors");
-
+const encryption=require("./controllers/message")
 // middleware
 
 app.use(cors());
@@ -105,12 +105,21 @@ io.on("connection", (socket) => {
 
   socket.on("new message", (newMessageRecieved) => {
     var chat = newMessageRecieved.chat;
-
+    console.log("Server side New Message Received chat:",newMessageRecieved)
+    const content=encryption.runCryptoScript(newMessageRecieved.content,"decrypt",newMessageRecieved.key)
+    newMessageRecieved.content=content
     if (!chat.users) return console.log("chat.users not defined");
 
     chat.users.forEach((user) => {
       if (user._id == newMessageRecieved.sender._id) return;
       socket.in(chat._id).emit("message received", newMessageRecieved);
     });
+  });
+
+  socket.on("decrypt message", (data) => {
+    console.log("Server side decrypt data:",data)
+    const content=encryption.runCryptoScript(data.content,"decrypt",data.key)
+    data.content=content
+    console.log("AFTER Server side decrypt data:",data)
   });
 });

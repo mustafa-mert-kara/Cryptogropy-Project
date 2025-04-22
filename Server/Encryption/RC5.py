@@ -1,6 +1,5 @@
 from random import randbytes
 import sys
-
 class RC5:
 
     def __init__(self, w, R, key, strip_extra_nulls=False):
@@ -138,14 +137,15 @@ def encrypt(message:str,block_size=64,key_length=128,round_count=12)->list[bytes
     key=randbytes(key_length//8)
 
     rc5 = RC5(block_size, round_count, key)
-    res=rc5.encryptBytes(bytes(message,encoding="utf-16"))
+    res=rc5.encryptBytes(bytes(message,encoding="utf-8"))
        
-    return [key,res]
+    return [key.hex(),res.hex()]
 
 def decrypt(message:str,key:bytes,block_size=64,round_count=12)->str:
-    rc5 = RC5(block_size, round_count, key)
-    res=rc5.decryptBytes(message)
-    return res.decode("utf-16")
+
+    rc5 = RC5(block_size, round_count, bytes.fromhex(key))
+    res=rc5.decryptBytes(bytes.fromhex(message))
+    return res.decode("utf-8")
 
 
 if __name__ == '__main__':
@@ -158,10 +158,18 @@ if __name__ == '__main__':
         res=decrypt(sys.argv[2],sys.argv[3])
         print(res)
     sys.stdout.flush()
-# key=np.random.default_rng(seed=5).bytes(64)
+
+
+# key=randbytes(128//8)
+
+
 
 # rc5 = RC5(64, 12, key)
-# res=rc5.encryptBytes(bytes("Deneme mesajı",encoding="utf-16"))
-# original=rc5.decryptBytes(res)
+# res=rc5.encryptBytes(bytes("Deneme mesaji",encoding="utf-8")).hex()
+# original=rc5.decryptBytes(bytes.fromhex(res))
 # print(res)
-# print(original.decode("utf-16"))
+# print(original.decode("utf-8"))
+# print("Original",res)
+# string=str(res)
+# tmp=bytes.fromhex(str(res))
+# print(rc5.decryptBytes(tmp).decode("utf-8"))

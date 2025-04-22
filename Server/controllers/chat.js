@@ -74,6 +74,7 @@ const getChatAccess = asyncHandler(async (req, res) => {
       const FullChat = await ChatModel.findOne({
         _id: createdChat._id,
       }).populate("users", "-password");
+      console.log("Inside getChatAccess FullChat:",FullChat)
       res.status(200).send(FullChat);
     } catch (err) {
       throw new CustomError(err.message, 400);
@@ -96,6 +97,7 @@ const getPrivateChats = asyncHandler(async (req, res) => {
           path: "latestMessage.sender",
           select: "username image gmail friends",
         });
+        console.log("Inside getPrivateChats Results:",results)
         res.status(200).send(results);
       });
   } catch (err) {

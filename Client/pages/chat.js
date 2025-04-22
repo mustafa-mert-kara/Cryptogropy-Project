@@ -62,9 +62,7 @@ function Chat() {
 
   const [socketConnected, setSocketConnected] = useState(false);
   const [currFriend, setCurrFriend] = useState("");
-  console.log("Inside chat")
-  console.log("Chat Data",chatData)
-  console.log("userData",userData)
+
   const fetchMessages = async (username = chatData.name, id = chatData.id) => {
     if (chatData.id == -1) return;
     try {
@@ -79,7 +77,7 @@ function Chat() {
         {},
         config
       );
-      console.log(data);
+      console.log("Inside fetchMessages Data:",data);
       ADDUSERMESSAGE(id, data);
       SETCHAT(username, id);
       setCurrFriend(getFriendId(id));
@@ -120,7 +118,7 @@ function Chat() {
         config
       );
       SETFRIENDS(data, d.username);
-      // console.log(data);
+      console.log("Inside fetchChatList Data:",data);
     } catch (err) {
       console.log(err);
       toast({
@@ -231,6 +229,7 @@ function Chat() {
     });
 
     socket.on("message received", (newMessageReceived) => {
+      console.log("Inside Message received")
       if (
         !selectedChatCompare ||
         selectedChatCompare.id !== newMessageReceived.chat._id
@@ -238,8 +237,8 @@ function Chat() {
         //give notifs
         console.log("notifs");
       } else {
-        // console.log("new message");
-        // console.log(newMessageReceived);
+        console.log("new message");
+        console.log(newMessageReceived);
         dispatch({
           type: "ADD_MESSAGE",
           message: newMessageReceived,

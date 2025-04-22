@@ -3,6 +3,7 @@ const { CustomError } = require("../error/custom");
 const MessageModel = require("../models/Message");
 const UserModel = require("../models/User");
 const ChatModel = require("../models/Chat");
+const { spawnSync } = require('child_process');
 // const chats = require("../data/data");
 
 const editMessage = asyncHandler(async (req, res) => {
@@ -47,6 +48,25 @@ const deleteMessage=asyncHandler(async(req,res)=>{
   }
 })
 
+function runCryptoScript(message,type,key=null){
+  
+  let args = ['Encryption/RC5.py',type,message];
+  if(key){
+    args.push(key)
+  }
+  const childProcess = spawnSync('python', args);
+  // childProcess.stdout.setEncoding('utf-8');
+  let data=childProcess.stdout.toString('utf8') 
+  
+if (type=="encrypt"){
+  let [key,cipher] =data.split(" ");
+ 
+  return [key,cipher]
+}else{
+  return data;
+}
+}
+
 const messageSender = asyncHandler(async (req, res) => {
   const { content, chatId } = req.body;
 
@@ -54,17 +74,17 @@ const messageSender = asyncHandler(async (req, res) => {
     //   console.log("Invalid data");
     throw new CustomError("Invalid data", 400);
   }
-
+  const  [key,cipher]=runCryptoScript(content,"encrypt")
+  console.log("Returned Key",key,"cipherText:",cipher)
   var newMessage = {
     sender: req.user._id,
-    content: content,
+    content: cipher,
     chat: chatId,
+    key:key,
     isDeleted: false,
   };
-
   try {
     var message = await MessageModel.create(newMessage);
-
     message = await message.populate("sender", "username image");
     message = await message.populate("chat");
     message = await UserModel.populate(message, {
@@ -72,10 +92,10 @@ const messageSender = asyncHandler(async (req, res) => {
       select: "username image gmail",
     });
 
+    
     await ChatModel.findByIdAndUpdate(req.body.chatId, {
       latestMessage: message,
     });
-
     res.status(200).json(message);
   } catch (error) {
     throw new CustomError("Unable to store message", 400);
@@ -83,17 +103,24 @@ const messageSender = asyncHandler(async (req, res) => {
 });
 
 const getAllMessages = asyncHandler(async (req, res) => {
+  console.log("Inside getAllMessages")
   try {
     const { id } = req.params;
     let data = await MessageModel.find({ chat: id });
     if (data.length === 0) {
+      console.log("Inside Data length")
       res.status(200).json(data);
       return;
     }
-    // console.log(data);
+    
     data = await MessageModel.find({ chat: id })
       .populate("sender", "username image")
       .populate("chat");
+    for(const val of data) {
+      const content=runCryptoScript(val.content,"decrypt",val.key)
+      console.log(content)
+      val.content=content
+  }
     res.status(200).json(data);
   } catch (err) {
     console.log(err);
@@ -105,5 +132,6 @@ module.exports = {
   messageSender,
   getAllMessages,
   editMessage,
-  deleteMessage
+  deleteMessage,
+  runCryptoScript
 };

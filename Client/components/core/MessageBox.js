@@ -15,6 +15,9 @@ import { bindActionCreators } from "redux";
 import { actionCreators } from "../../hooks";
 import Axios from "axios";
 // import { socket } from "../../util/socket";
+
+
+
 function MessageBox({ socket }) {
   const dispatch = useDispatch();
   const color = useColorModeValue("#fff", "#000");
@@ -37,6 +40,7 @@ function MessageBox({ socket }) {
         authorization: `Bearer ${userData.token}`,
       },
     };
+    console.log("Inside Handle Message")
     try {
       const { name, id } = chatData;
       setSearch("");
@@ -48,13 +52,18 @@ function MessageBox({ socket }) {
         },
         config
       );
+      console.log("Handle Messages New Message data: ",data);
+      socket.emit("new message", data);
+      data.content=search
       dispatch({
         type: "ADD_MESSAGE",
         message: data,
         id: chatData.id,
       });
       // ADDMESSAGE(data, chatData.id);
-      socket.emit("new message", data);
+      // console.log("Handle Messages New Message data: ",data);
+      // socket.emit("decrypt message",{ data});
+      
       // console.log(data);
       SETCHAT(name, id);
       // console.log(data);
