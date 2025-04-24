@@ -25,9 +25,14 @@ import { keyframes } from '@emotion/react'
 import Axios from "axios";
 import StatisticsView from "../views/StatisticsView";
 import { AiFillGithub } from "react-icons/ai";
-import { useState } from "react";
+import React, { useState } from "react";
+
+let globalEncryptionType="RC5";
 
 function Navbar(props) {
+  const [encryptionType,setType] = useState("RC5");
+  const B = (props) => <Text style={{fontWeight: 'bold'}}>{props.children}</Text>
+
   
   const spin = keyframes`
   from { transform: rotate(0deg); }
@@ -44,7 +49,7 @@ function Navbar(props) {
     actionCreators,
     dispatch
   );
-
+  
   const removeFriend = async () => {
     try {
       const user = JSON.parse(localStorage.getItem("userInfo"));
@@ -94,6 +99,17 @@ function Navbar(props) {
     }
   };
 
+  function handleClick() {
+    if(encryptionType=="RC5"){
+      setType("RC6")
+      globalEncryptionType="RC6"
+    }else{
+      setType("RC5")
+      globalEncryptionType="RC5"
+    }
+    
+  }
+
   return (
     <Flex
       height={"8vh"}
@@ -114,7 +130,7 @@ function Navbar(props) {
         {props.name}
       </Text>
       <Container color={"white"} />
-
+      <button onClick={handleClick}>Encryption:<B>{encryptionType}</B></button>
       <StatisticsView chatId={props.id} />
       <IconButton
         variant="link"
@@ -148,4 +164,6 @@ function Navbar(props) {
   );
 }
 
-export default Navbar;
+// export default Navbar;
+
+export {Navbar,globalEncryptionType};

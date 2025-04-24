@@ -18,6 +18,10 @@ const MessageSchema = new mongoose.Schema(
       type: String,
       default: false,
     },
+    encryptionType: {
+      type: String,
+      default: false,
+    },
     isDeleted: {
       type: Boolean,
       default: false,

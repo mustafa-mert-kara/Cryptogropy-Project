@@ -106,7 +106,7 @@ io.on("connection", (socket) => {
   socket.on("new message", (newMessageRecieved) => {
     var chat = newMessageRecieved.chat;
     console.log("Server side New Message Received chat:",newMessageRecieved)
-    const content=encryption.runCryptoScript(newMessageRecieved.content,"decrypt",newMessageRecieved.key)
+    const content=encryption.runCryptoScript(newMessageRecieved.content,"decrypt",newMessageRecieved.key,RC_type=newMessageRecieved.encryptionType)
     newMessageRecieved.content=content
     if (!chat.users) return console.log("chat.users not defined");
 
@@ -118,7 +118,7 @@ io.on("connection", (socket) => {
 
   socket.on("decrypt message", (data) => {
     console.log("Server side decrypt data:",data)
-    const content=encryption.runCryptoScript(data.content,"decrypt",data.key)
+    const content=encryption.runCryptoScript(data.content,"decrypt",data.key,RC_type=data.encryptionType)
     data.content=content
     console.log("AFTER Server side decrypt data:",data)
   });

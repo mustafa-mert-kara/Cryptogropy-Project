@@ -16,6 +16,7 @@ import { actionCreators } from "../../hooks";
 import Axios from "axios";
 // import { socket } from "../../util/socket";
 
+import {globalEncryptionType} from "./Navbar";
 
 
 function MessageBox({ socket }) {
@@ -49,6 +50,7 @@ function MessageBox({ socket }) {
         {
           content: search,
           chatId: chatData.id,
+          encryptionType:globalEncryptionType,
         },
         config
       );

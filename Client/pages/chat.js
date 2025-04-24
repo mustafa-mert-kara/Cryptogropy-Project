@@ -12,7 +12,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import MessageBox from "../components/core/MessageBox";
-import Navbar from "../components/core/Navbar";
+import {Navbar} from "../components/core/Navbar";
 import FriendCard from "../components/helpers/FriendCard";
 import { bindActionCreators } from "redux";
 import SlideDrawer from "../components/misc/SideDrawer";
@@ -263,6 +263,9 @@ function Chat() {
     await sleep(2500);
     window.location.href = "./";
   };
+
+ 
+  
 
   return (
     <Flex m={"0"} p="0" flexDirection={"row"}>
